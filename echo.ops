@@ -1,0 +1,19 @@
+params:
+  args: array<string>
+
+output:
+  stdout: string
+
+...
+
+# params(:args) is an array of json values that we want to transform into an array of strings
+
+args = params.args || []
+string_args = args.map(&:to_s)
+quoted_string_args = string_args.map {|arg| mustache { '"{{ arg }}"' } }
+
+output = sh { 'echo {{ quoted_string_args.join(" ") }}' }
+
+{
+  stdout: output,
+}

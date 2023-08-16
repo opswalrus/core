@@ -1,0 +1,12 @@
+params:
+  user: string?
+  host: string
+  identity_file: string?
+
+...
+
+user = params.user || env.user || "root"
+host = params.host || env.host
+identity_file = params.identity_file || "~/.ssh/id_ed25519.pub"
+
+shell { 'ssh-copy-id -i {{ identity_file }} {{ user }}@{{ host }}' }

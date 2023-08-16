@@ -1,0 +1,30 @@
+output:
+  success: boolean
+  error: string?
+  host:
+    name: string
+    os: string
+    distribution: string
+    lsb_release:
+
+...
+
+lsb_release = lsb_release()
+# puts lsb_release
+
+#puts sh { "echo $SHELL" }
+
+sh 'ops run @core echo "foo"'
+
+lscpu = sh { "lscpu -J" }
+
+{
+  success: true,
+  host: {
+    name: "test",
+    os: "linux",
+    distribution: "ubuntu",
+    lsb_release: lsb_release,
+    lscpu: lscpu,
+  }
+}

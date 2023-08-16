@@ -1,0 +1,13 @@
+params:
+  path: string
+  template: string
+  variables: map
+...
+
+path = params.path
+template = params.template
+variables = params.variables
+
+file_contents = WalrusLang.render(template, variables)
+
+File.write(path, file_contents)
