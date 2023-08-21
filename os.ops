@@ -1,0 +1,72 @@
+# family = bsd, darwin, linux, solaris, windows
+# os = freebsd, netbsd, osx, macos, arch, manjaro, debian, fedora, ubuntu, solaris, omnios, win10, win11, etc.
+# version = 13.2, 9.3, 10.4, 10.6, 10.12, 2023.08.01, 22.1.0, 12.1, 23.04, 11.4.42, r151046, 22H2, 23H2
+
+# this depends on bash
+# todo: remove dependency on bash
+os_type = sh { 'bash -c "echo $OSTYPE"' }.strip
+
+family = case os_type
+when /solaris/i
+  "solaris"
+when /darwin/i
+  "darwin"
+when /linux/i
+  "linux"
+when /bsd/i
+  "bsd"
+when /msys|cygwin|mingw|nt|win/i
+  "windows"
+else
+  uname = sh { 'uname' }.strip
+  case uname
+  when /sunos/i
+    "solaris"
+  when /darwin/i
+    "darwin"
+  when /linux/i
+    "linux"
+  when /bsd/i
+    "bsd"
+  when /windows/i
+    "windows"
+  else
+    "unknown"
+  end
+end
+
+base_os, os, version = case family
+when "bsd"
+  # todo
+when "darwin"
+  # todo
+when "linux"
+  os_release = sh { 'cat /etc/os-release' }
+  id_like_match = /^id_like=(.*?)$/i.match(os_release)
+  id_match = /^id=(.*?)$/i.match(os_release)
+  version_id_match = /^version_id=(.*)$/i.match(os_release)
+  if id_match && version_id_match
+    id_like = id_like_match.captures.first.strip.gsub('"', '') if id_like_match
+    id = id_match.captures.first.strip.gsub('"', '')
+    version = version_id_match.captures.first.strip.gsub('"', '')
+
+    id_like ||= id
+
+    [id_like, id, version]
+  else
+    ["unknown", "unknown", "unknown"]
+  end
+when "solaris"
+  # todo
+when "windows"
+  # todo
+else
+  ["unknown", "unknown", "unknown"]
+end
+
+{
+  family: family,
+  base_os: base_os.downcase,
+  os: os.downcase,
+  version: version
+}

@@ -1,0 +1,5 @@
+params:
+  package: string
+...
+
+shell("install {{ params.package }}") { 'sudo apt install -yq {{ params.package }}' }

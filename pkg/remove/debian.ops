@@ -1,0 +1,5 @@
+params:
+  package: string
+...
+
+shell("remove {{ params.package }}") { 'sudo apt remove -yq {{ params.package }}' }

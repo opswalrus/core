@@ -1,0 +1,14 @@
+imports:
+  os: ../../os
+...
+
+case os()
+in {base_os: /arch/}
+  puts "update repo arch"
+in {base_os: /debian|ubuntu/}
+  debian()
+in {base_os: /fedora/}
+  puts "update repo fedora"
+else
+  puts "unknown"
+end

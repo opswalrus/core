@@ -1,0 +1,17 @@
+params:
+  package: string
+
+imports:
+  os: ../../os
+...
+
+case os()
+in {base_os: /arch/}
+  puts "install arch"
+in {base_os: /debian|ubuntu/}
+  debian(package: params.package)
+in {base_os: /fedora/}
+  puts "install fedora"
+else
+  puts "unknown"
+end
