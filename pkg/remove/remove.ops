@@ -1,5 +1,5 @@
 params:
-  package: string
+  package: string | array string    # package parameter may either be a String or an Array(String)
 
 imports:
   os: ../../os

@@ -1,5 +1,9 @@
 params:
-  package: string
+  package: string | array string
 ...
 
-shell("remove {{ params.package }}") { 'sudo apt remove -yq {{ params.package }}' }
+if params.package.is_a? Array
+  shell("remove {{ params.package.join(', ') }}") { 'sudo apt remove -yq {{ params.package.join(" ") }}' }
+else
+  shell("remove {{ params.package }}") { 'sudo apt remove -yq {{ params.package }}' }
+end
