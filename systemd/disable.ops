@@ -1,0 +1,10 @@
+params:
+  service: string
+
+output:
+  stdout: string
+...
+
+sh 'Disable {{ params.service }}' do
+  "sudo systemctl disable {{ params.service }}"
+end

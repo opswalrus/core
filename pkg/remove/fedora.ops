@@ -1,0 +1,15 @@
+params:
+  package: string | array string
+...
+
+# -C, --cacheonly
+#   Run entirely from system cache, don’t update the cache and use it even in case it is expired.
+#
+#   DNF uses a separate cache for each user under which it executes. The cache for the root user is called the system cache.
+#   This switch allows a regular user read-only access to the system cache, which usually is more fresh than the user’s
+#   and thus he does not have to wait for metadata sync.
+if params.package.is_a? Array
+  shell("remove {{ params.package.join(', ') }}") { 'sudo dnf -yq remove -C {{ params.package.join(" ") }}' }
+else
+  shell("remove {{ params.package }}") { 'sudo dnf -yq remove -C {{ params.package }}' }
+end

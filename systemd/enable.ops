@@ -1,0 +1,10 @@
+params:
+  service: string
+
+output:
+  stdout: string
+...
+
+sh 'Enable {{ params.service }}' do
+  "sudo systemctl enable {{ params.service }}"
+end

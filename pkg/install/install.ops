@@ -7,11 +7,11 @@ imports:
 
 case os()
 in {base_os: /arch/}
-  puts "install arch"
+  arch(package: params.package)
 in {base_os: /debian|ubuntu/}
   debian(package: params.package)
 in {base_os: /fedora/}
-  puts "install fedora"
+  fedora(package: params.package)
 else
-  puts "unknown"
+  exit 1, "unknown os; unable to install #{params.package}"
 end

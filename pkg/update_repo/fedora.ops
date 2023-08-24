@@ -1,0 +1,2 @@
+shell("remove repository metadata") { 'sudo dnf clean metadata' }
+shell("update package repos") { 'sudo dnf check-update' }

@@ -1,0 +1,9 @@
+params:
+  package: string | array string
+...
+
+if params.package.is_a? Array
+  shell("install {{ params.package.join(', ') }}") { 'sudo dnf -yq install {{ params.package.join(" ") }}' }
+else
+  shell("install {{ params.package }}") { 'sudo dnf -yq install {{ params.package }}' }
+end

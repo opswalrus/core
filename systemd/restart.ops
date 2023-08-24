@@ -1,0 +1,10 @@
+params:
+  service: string
+
+output:
+  stdout: string
+...
+
+sh 'Restart {{ params.service }}' do
+  "sudo systemctl restart {{ params.service }}"
+end

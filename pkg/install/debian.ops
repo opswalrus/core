@@ -3,7 +3,8 @@ params:
 ...
 
 if params.package.is_a? Array
-  shell("install {{ params.package.join(', ') }}") { 'sudo apt install -yq {{ params.package.join(" ") }}' }
+  shell("install {{ params.package.join(', ') }}") { 'sudo DEBIAN_FRONTEND=noninteractive apt install -yq {{ params.package.join(" ") }}' }
 else
-  shell("install {{ params.package }}") { 'sudo apt install -yq {{ params.package }}' }
+  shell("install {{ params.package }}") { 'sudo DEBIAN_FRONTEND=noninteractive apt install -yq {{ params.package }}' }
 end
+shell("Restart services that need to be restarted") { 'sudo needrestart -q -r a' }

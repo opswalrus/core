@@ -4,11 +4,11 @@ imports:
 
 case os()
 in {base_os: /arch/}
-  puts "update repo arch"
+  arch(package: params.package)
 in {base_os: /debian|ubuntu/}
-  debian()
+  debian(package: params.package)
 in {base_os: /fedora/}
-  puts "update repo fedora"
+  fedora(package: params.package)
 else
-  puts "unknown"
+  exit 1, "unknown os; unable to update package repo"
 end
