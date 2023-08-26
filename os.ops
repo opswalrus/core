@@ -13,6 +13,8 @@ when /darwin/i
   "darwin"
 when /linux/i
   "linux"
+when /linux-gnu/i
+  "linux"
 when /bsd/i
   "bsd"
 when /msys|cygwin|mingw|nt|win/i
@@ -42,17 +44,19 @@ when "darwin"
   # todo
 when "linux"
   os_release = sh { 'cat /etc/os-release' }
-  id_like_match = /^id_like=(.*?)$/i.match(os_release)
   id_match = /^id=(.*?)$/i.match(os_release)
+  id_like_match = /^id_like=(.*?)$/i.match(os_release)
   version_id_match = /^version_id=(.*)$/i.match(os_release)
-  if id_match && version_id_match
-    id_like = id_like_match.captures.first.strip.gsub('"', '') if id_like_match
+  build_id_match = /^build_id=(.*)$/i.match(os_release)
+  if id_match
     id = id_match.captures.first.strip.gsub('"', '')
-    version = version_id_match.captures.first.strip.gsub('"', '')
+    id_like = id_like_match.captures.first.strip.gsub('"', '') if id_like_match
+    version = version_id_match.captures.first.strip.gsub('"', '') if version_id_match
+    build = build_id_match.captures.first.strip.gsub('"', '') if build_id_match
 
     id_like ||= id
 
-    [id_like, id, version]
+    [id_like, id, version || build || "unknown"]
   else
     ["unknown", "unknown", "unknown"]
   end
