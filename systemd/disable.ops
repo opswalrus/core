@@ -1,8 +1,5 @@
 params:
   service: string
-
-output:
-  stdout: string
 ...
 
 sh 'Disable {{ params.service }}' do

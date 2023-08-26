@@ -1,8 +1,5 @@
 params:
   service: string
-
-output:
-  stdout: string
 ...
 
 sh 'Stop {{ params.service }}' do

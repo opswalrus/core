@@ -1,9 +1,8 @@
 params:
-  args: array<string>
+  args: array string    # array of strings
 
 output:
   stdout: string
-
 ...
 
 # params(:args) is an array of json values that we want to transform into an array of strings
