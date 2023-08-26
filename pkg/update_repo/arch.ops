@@ -1,0 +1,1 @@
+shell("update package repos") { 'sudo pacman -Sy' }

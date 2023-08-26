@@ -1,0 +1,9 @@
+params:
+  package: string | array string
+...
+
+if params.package.is_a? Array
+  shell("remove {{ params.package.join(', ') }}") { 'sudo pacman -Rs {{ params.package.join(" ") }}' }
+else
+  shell("remove {{ params.package }}") { 'sudo pacman -Rs {{ params.package }}' }
+end

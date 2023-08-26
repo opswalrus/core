@@ -1,13 +1,13 @@
 params:
   path: string
   template: string
-  variables: map
+  variables: map string any   # map of string key => value of any type
 ...
 
 path = params.path
 template = params.template
 variables = params.variables
 
-file_contents = WalrusLang.render(template, variables)
+file_contents = template.render_template(variables.to_h)
 
 File.write(path, file_contents)
