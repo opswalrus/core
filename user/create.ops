@@ -1,0 +1,10 @@
+params:
+  name: string
+  create_home: boolean?
+...
+
+success = sh? 'sudo useradd {{ params.create_home ? "-m " : "-M " }}{{ params.name }}'.mustache
+
+{
+  success: success
+}

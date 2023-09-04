@@ -1,0 +1,12 @@
+params:
+  file: string?
+...
+
+file = params.file || "/etc/sudoers"
+
+output = sh "sudo visudo -cf {{ file }}"
+success = output =~ /#{file}: parsed OK/
+
+{
+  success: !!success
+}

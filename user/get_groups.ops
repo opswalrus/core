@@ -1,0 +1,14 @@
+params:
+  username: string
+...
+
+out, err, status = shell "groups {{ params.username }}"
+success = status == 0
+groups = if success && m = /#{params.username} : (.*)/.match(out)
+  m[1].split(" ")
+end
+
+{
+  success: success,
+  groups: groups
+}

@@ -1,0 +1,13 @@
+params:
+  hostname: string
+
+output:
+  success: success
+...
+
+desc "Setting hostname to {{ params.hostname }}"
+success = sh? { "sudo hostnamectl set-hostname {{ params.hostname }}" }
+
+{
+  success: success
+}

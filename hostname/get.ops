@@ -1,0 +1,9 @@
+output:
+  hostname: string
+...
+
+hostname = sh { "hostname" }
+
+{
+  hostname: hostname
+}

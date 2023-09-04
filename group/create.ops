@@ -1,0 +1,9 @@
+params:
+  name: string
+...
+
+success = sh? "sudo groupadd {{ params.name }}"
+
+{
+  success: success
+}

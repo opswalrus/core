@@ -9,7 +9,7 @@ output:
 
 args = params.args || []
 string_args = args.map(&:to_s)
-quoted_string_args = string_args.map {|arg| mustache { '"{{ arg }}"' } }
+quoted_string_args = string_args.map {|arg| '"{{ arg }}"'.mustache }
 
 output = sh { 'echo {{ quoted_string_args.join(" ") }}' }
 

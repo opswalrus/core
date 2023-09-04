@@ -1,0 +1,12 @@
+params:
+  file: string
+  pattern: string
+  line: string
+...
+
+# -i : edit files in place
+success = sh? "sed -i '/#{params.pattern}/c\\#{params.line}' #{params.file}"
+
+{
+  success: success
+}
