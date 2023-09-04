@@ -1,8 +1,8 @@
 params:
-  name: string
+  group: string
 ...
 
-success = sh? "sudo groupadd {{ params.name }}"
+success = sh? "sudo groupadd {{ params.group }}"
 
 {
   success: success

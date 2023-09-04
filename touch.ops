@@ -1,9 +1,0 @@
-params:
-  file: string
-...
-
-output, _, exit_status = shell { 'touch "{{ params(:file) }}"' }
-
-{
-  exit_status: exit_status
-}

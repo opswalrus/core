@@ -1,0 +1,49 @@
+params:
+  public_key: string      # this is a string containing the contents of a public key file, e.g. "ssh-ed25519 AAAA..."
+  user: string?           # this is the user we want to add the public key to their authorized_keys file
+
+imports:
+  core: ..
+...
+
+user = params.user
+
+user_home = if user
+  core.user.exists(user: params.user) => {exists: user_exists}
+  if user_exists
+    Dir.home(user)
+  else
+    core.hostname.get => {hostname:}
+    App.instance.warn "Unable to copy ssh id for user {{ user }}. User does not exist on host {{ hostname }}.".mustache
+    return {success: false}
+  end
+else
+  Dir.home
+end
+
+user_home = user_home.to_pathname
+authorized_keys_file = user_home.join(".ssh", "authorized_keys")
+ssh_dir = authorized_keys_file.dirname
+
+core.dir.create path: ssh_dir, mode: 700, owner: user
+core.file.touch file: authorized_keys_file, mode: 600, owner: user
+
+public_key = params.public_key.strip
+
+key_already_exists_in_authorized_keys = sh? '{{ "sudo -u {{ user }} " if user }}grep -xq "{{ public_key }}" {{ authorized_keys_file }}'
+success = key_already_exists_in_authorized_keys || begin
+
+end
+
+# success = begin
+#   public_key = params.public_key.strip
+#   File.open(authorized_keys_file, 'a+') {|file| file.puts(public_key) } unless File.foreach(authorized_keys_file).grep(/#{public_key}/).any?
+#   true
+# rescue => e
+#   App.instance.error "Failed to write #{authorized_keys_file}: #{e.message}"
+#   false
+# end
+
+{
+  success: success
+}

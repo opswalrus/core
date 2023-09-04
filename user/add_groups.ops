@@ -1,13 +1,13 @@
 params:
-  username: string
+  user: string
   groups: array string
 ...
 
 if !params.groups.empty?
   groups = params.groups.join(",")
-  out, err, status = shell 'sudo usermod --append -G {{groups}} {{ params.username }}'.mustache
+  out, err, status = shell 'sudo usermod --append -G {{ groups }} {{ params.user }}'.mustache
   success = status == 0
-  groups = if success && m = /#{params.username} : (.*)/.match(out)
+  groups = if success && m = /#{params.user} : (.*)/.match(out)
     m[1].split(" ")
   end
 end

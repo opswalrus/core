@@ -1,0 +1,12 @@
+params:
+  path: string
+  group: string
+  recursive: boolean?
+  sudo: boolean?
+...
+
+success = sh? '{{ "sudo " if params.sudo }}chgrp {{ "-R " if params.recursive }}{{ params.group }} {{ params.path }}'
+
+{
+  success: success
+}

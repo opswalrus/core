@@ -1,0 +1,9 @@
+params:
+  user: string
+...
+
+exists = sh? 'id {{ params.user }}'
+
+{
+  exists: exists
+}

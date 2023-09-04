@@ -5,5 +5,5 @@ output:
 hostname = sh { "hostname" }
 
 {
-  hostname: hostname
+  hostname: hostname.strip
 }

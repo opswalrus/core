@@ -1,0 +1,12 @@
+params:
+  file: string
+  line: string
+  sudo: boolean?
+...
+
+# -i : edit files in place
+success = sh? '{{ "sudo " if params.sudo }}sed -i "$ a {{ params.line }}" {{ params.file }}'
+
+{
+  success: success
+}

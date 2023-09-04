@@ -2,6 +2,9 @@ params:
   service: string
 ...
 
-sh 'Restart {{ params.service }}' do
-  "sudo systemctl restart {{ params.service }}"
-end
+success = sh? 'Restart {{ params.service }}',
+              'sudo systemctl restart {{ params.service }}'
+
+{
+  success: success
+}

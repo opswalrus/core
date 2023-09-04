@@ -2,6 +2,9 @@ params:
   service: string
 ...
 
-sh 'Stop {{ params.service }}' do
-  "sudo systemctl stop {{ params.service }}"
-end
+success = sh? 'Stop {{ params.service }}',
+              'sudo systemctl stop {{ params.service }}'
+
+{
+  success: success
+}

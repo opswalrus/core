@@ -1,0 +1,24 @@
+params:
+  file: string
+  mode: string?
+  owner: string?
+
+imports:
+  core: ..
+...
+
+file = params.file
+mode = params.mode
+owner = params.owner
+
+success = sh? '{{ "sudo -u {{ owner }} " if owner }}touch {{ file }}'
+
+chmod_success = true
+if mode
+  retval = core.chmod path: file, mode: mode, sudo: !!owner
+  retval => {success: chmod_success}
+end
+
+{
+  success: success && chmod_success
+}
