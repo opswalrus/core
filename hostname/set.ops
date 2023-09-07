@@ -6,7 +6,7 @@ output:
 ...
 
 desc "Setting hostname to {{ params.hostname }}"
-success = sh? { "sudo hostnamectl set-hostname {{ params.hostname }}" }
+success = sh? "sudo hostnamectl set-hostname {{ params.hostname }}"
 
 {
   success: success

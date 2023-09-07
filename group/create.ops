@@ -2,7 +2,12 @@ params:
   group: string
 ...
 
-success = sh? "sudo groupadd {{ params.group }}"
+exists(group: params.group) => {exists: group_exists}
+success = if group_exists
+  true
+else
+  sh? "sudo groupadd {{ params.group }}"
+end
 
 {
   success: success

@@ -1,0 +1,9 @@
+params:
+  group: string
+...
+
+exists = sh? 'getent group {{ params.group }}'
+
+{
+  exists: exists
+}

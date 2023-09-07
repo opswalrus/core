@@ -3,7 +3,12 @@ params:
   create_home: boolean?
 ...
 
-success = sh? 'sudo useradd {{ params.create_home ? "-m " : "-M " }}{{ params.user }}'.mustache
+exists(user: params.user) => {exists: user_exists}
+success = if user_exists
+  true
+else
+  sh? 'sudo useradd {{ params.create_home ? "-m " : "-M " }}{{ params.user }}'.mustache
+end
 
 {
   success: success

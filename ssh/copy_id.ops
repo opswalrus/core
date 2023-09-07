@@ -31,9 +31,8 @@ core.file.touch file: authorized_keys_file, mode: 600, owner: user
 public_key = params.public_key.strip
 
 key_already_exists_in_authorized_keys = sh? '{{ "sudo -u {{ user }} " if user }}grep -xq "{{ public_key }}" {{ authorized_keys_file }}'
-success = key_already_exists_in_authorized_keys || begin
-
-end
+success = key_already_exists_in_authorized_keys ||
+          sh?('{{ "sudo -u {{ user }} " if user }}echo "{{ public_key }}" >> {{ authorized_keys_file }}')
 
 # success = begin
 #   public_key = params.public_key.strip
