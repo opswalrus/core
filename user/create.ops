@@ -10,6 +10,13 @@ else
   sh? 'sudo useradd {{ params.create_home ? "-m " : "-M " }}{{ params.user }}'.mustache
 end
 
+create_home_success = if params.create_home
+  home_dir_exists = File.exist?(Dir.home(params.user))
+  home_dir_exists || sh?('sudo mkhomedir_helper {{ params.user }}')
+else
+  true
+end
+
 {
-  success: success
+  success: success && create_home_success
 }
