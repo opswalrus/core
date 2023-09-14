@@ -1,11 +1,14 @@
 params:
   path: string
   mode: string
-  recursive: boolean?
-  sudo: boolean?
+  recursive: boolean?     # default: false
+  sudo: boolean?          # default: true
 ...
 
-success = sh? '{{ "sudo " if params.sudo }}chmod {{ "-R " if params.recursive }}{{ params.mode }} {{ params.path }}'
+recursive = params.recursive.boolean!(default: false)
+sudo = params.sudo.boolean!(default: true)
+
+success = sh? '{{ "sudo " if sudo }}chmod {{ "-R " if recursive }}{{ params.mode }} {{ params.path }}'
 
 {
   success: success

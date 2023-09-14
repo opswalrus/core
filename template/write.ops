@@ -1,21 +1,50 @@
+# template OR template_file must be supplied; if both are supplied, then template is preferred and a warning is written
 params:
-  path: string
-  template: string
+  template: string?           # template is a string template that should be rendered and written to the path specified in the to argument
+  template_file: string?      # template_file is a file that should be read as a template, rendered, and written to the path specified in the to argument
   variables: map string any   # map of string key => value of any type
+  to: string
 ...
 
 template = params.template
+template_file = params.template_file
 variables = params.variables
+destination_path = params.to
 
-file_contents = template.render_template(variables.to_h)
+warn "Both a template literal as well as a template file were provided. Using the template literal." if template && template_file
+
+walrus_template = if template
+  puts "Writing template literal to #{destination_path}"
+  template
+elsif template_file
+  puts "Writing template file #{template_file} to #{destination_path}"
+  File.read(template_file)
+else
+  exit 1, "unable to write template to #{destination_path}; no template literal or template file was provided"
+end
+
+file_contents = walrus_template.render_template(variables.to_h)
 
 success = begin
-  File.write(params.path, file_contents)
+  destination_path = destination_path.gsub(/^~/, Dir.home).to_pathname
+  output_file = if destination_path.directory?
+    filename = if template_file
+      template_file.to_pathname.basename
+    else
+      exit 1, "unable to write template to file in #{destination_path} directory; destination file name could not be derived"
+    end
+    destination_path.join(filename)
+  else
+    destination_path
+  end
+  File.write(output_file, file_contents)
   true
 rescue => e
+  puts "Unable to write file '#{output_file}': #{e.message}"
   false
 end
 
 {
-  success: success
+  success: success,
+  path: output_file
 }

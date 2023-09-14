@@ -2,11 +2,13 @@ params:
   file: string
   pattern: string
   line: string
-  sudo: boolean?
+  sudo: boolean?        # defualt: true
 ...
 
+sudo = params.sudo.boolean!(default: true)
+
 # -i : edit files in place
-success = sh? '{{ "sudo " if params.sudo }}sed -i "/{{ params.pattern }}/c\{{ params.line }}" {{ params.file }}'
+success = sh? '{{ "sudo " if sudo }}sed -i "/{{ params.pattern }}/c\{{ params.line }}" {{ params.file }}'
 
 {
   success: success

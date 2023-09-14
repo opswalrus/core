@@ -32,7 +32,7 @@ public_key = params.public_key.strip
 
 key_already_exists_in_authorized_keys = sh? '{{ "sudo -u {{ user }} " if user }}grep -xq "{{ public_key }}" {{ authorized_keys_file }}'
 success = key_already_exists_in_authorized_keys ||
-          sh?('{{ "sudo -u {{ user }} " if user }}echo "{{ public_key }}" >> {{ authorized_keys_file }}')
+          sh?('echo "{{ public_key }}" | {{ "sudo -u {{ user }} " if user }}tee -a {{ authorized_keys_file }}')
 
 # success = begin
 #   public_key = params.public_key.strip

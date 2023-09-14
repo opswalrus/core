@@ -1,0 +1,20 @@
+params:
+  from: string
+  to: string
+  sudo: boolean?        # defualt: true
+
+imports:
+  core: ..
+...
+
+from = params.from
+to = params.to
+mode = params.mode
+owner = params.owner
+sudo = params.sudo.boolean!(default: true)
+
+success = sh? '{{ "sudo " if sudo }}cp {{ from }} {{ to }}'
+
+{
+  success: success && chmod_success
+}

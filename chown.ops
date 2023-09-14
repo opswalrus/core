@@ -2,13 +2,15 @@ params:
   path: string
   owner: string
   group: string?
-  recursive: boolean?
-  sudo: boolean?
+  recursive: boolean?   # default: false
+  sudo: boolean?        # defualt: true
 ...
 
 group = params.group
+recursive = params.recursive.boolean!(default: false)
+sudo = params.sudo.boolean!(default: true)
 
-success = sh? '{{ "sudo " if params.sudo }}chown {{ "-R " if params.recursive }}{{ params.owner }}{{ ":{{ group }}" if group }} {{ params.path }}'
+success = sh? '{{ "sudo " if sudo }}chown {{ "-R " if recursive }}{{ params.owner }}{{ ":{{ group }}" if group }} {{ params.path }}'
 
 {
   success: success
