@@ -1,0 +1,17 @@
+output:
+  reboot_needed: boolean
+...
+
+reboot_needed = case os()
+in {base_os: /debian|ubuntu/}
+  file.exists(file: '/var/run/reboot-required')[:exists]
+in {base_os: /fedora/}
+  pkg.install!(package: 'dnf-utils')
+  sh? 'needs-restarting'
+else
+  exit 1, "unknown os; unable to determine whether host needs to be rebooted"
+end
+
+{
+  reboot_needed: reboot_needed
+}

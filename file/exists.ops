@@ -1,0 +1,9 @@
+params:
+  path: string
+...
+
+exists = sh? 'test -f {{ params.path }}'
+
+{
+  exists: exists
+}
