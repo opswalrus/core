@@ -1,0 +1,12 @@
+params:
+  user: string
+...
+
+out, err, status = shell "id -u {{ params.user }}"
+success = status == 0
+uid = out.strip
+
+{
+  success: success,
+  uid: uid
+}

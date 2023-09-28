@@ -4,12 +4,20 @@ params:
   template_file: string?      # template_file is a file that should be read as a template, rendered, and written to the path specified in the to argument
   variables: map string any   # map of string key => value of any type
   to: string
+  mode: string?
+  owner: string?
+  group: string?
+imports:
+  core: ..
 ...
 
 template = params.template
 template_file = params.template_file
 variables = params.variables
-destination_path = params.to
+mode = params.mode
+owner = params.owner
+group = params.group
+destination_path = params.to.to_s
 
 warn "Both a template literal as well as a template file were provided. Using the template literal." if template && template_file
 
@@ -27,7 +35,7 @@ file_contents = walrus_template.render_template(variables.to_h)
 
 success = begin
   destination_path = destination_path.gsub(/^~/, Dir.home).to_pathname
-  output_file = if destination_path.directory?
+  output_file_path = if destination_path.directory?
     filename = if template_file
       template_file.to_pathname.basename
     else
@@ -37,14 +45,41 @@ success = begin
   else
     destination_path
   end
-  File.write(output_file, file_contents)
+
+  # File.write(output_file, file_contents)
+  tmpfile = Tempfile.create     # => #<File:/tmp/20220505-9795-17ky6f6>
+  begin
+    tmpfile.write(file_contents)
+    tmpfile.close
+    core.file.copy from: tmpfile.path,
+                   to: output_file_path,
+                   mode: mode,
+                   owner: owner,
+                   group: group
+  ensure
+    File.unlink(tmpfile.path) if File.exist?(tmpfile.path)
+   end
+
   true
 rescue => e
-  puts "Unable to write file '#{output_file}': #{e.message}"
+  puts "Unable to write file '#{output_file_path}': #{e.message}"
   false
 end
 
+chmod_success = true
+if mode
+  retval = core.chmod path: output_file_path, mode: mode, sudo: !!owner
+  retval => {success: chmod_success}
+end
+
+chown_success = true
+if owner
+  retval = core.chown path: output_file_path, owner: owner, group: group
+  retval => {success: chown_success}
+end
+
+
 {
-  success: success,
-  path: output_file
+  success: success && chmod_success && chown_success,
+  path: output_file_path
 }

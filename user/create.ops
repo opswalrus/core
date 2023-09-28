@@ -1,13 +1,18 @@
 params:
   user: string
   create_home: boolean?
+  create_group: boolean?
+  system: boolean?
 ...
 
 exists(user: params.user) => {exists: user_exists}
 success = if user_exists
   true
 else
-  sh? 'sudo useradd {{ params.create_home ? "-m " : "-M " }}{{ params.user }}'.mustache
+  create_home_arg = params.create_home ? "--create-home " : "--no-create-home "
+  create_group_arg = params.create_group ? "--user-group " : "--no-user-group "
+  system_arg = params.system ? "--system " : ""
+  sh? 'sudo useradd {{ create_home_arg }}{{ create_group_arg }}{{ system_arg }}{{ params.user }}'.mustache
 end
 
 create_home_success = if params.create_home

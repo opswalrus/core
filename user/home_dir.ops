@@ -1,0 +1,11 @@
+params:
+  user: string
+...
+
+home_dir = Dir.home(params.user)
+home_dir_exists = File.exist?(home_dir)
+
+{
+  path: home_dir,
+  exists: home_dir_exists
+}

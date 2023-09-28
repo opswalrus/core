@@ -1,0 +1,10 @@
+params:
+  user: string
+  shell: string
+...
+
+success = sh? 'sudo usermod -s {{ params.shell }} {{ params.user }}'
+
+{
+  success: success
+}

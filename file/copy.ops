@@ -1,7 +1,10 @@
 params:
   from: string
   to: string
-  sudo: boolean?        # defualt: true
+  mode: string?
+  owner: string?
+  group: string?
+  sudo: boolean?        # default: true
 
 imports:
   core: ..
@@ -11,10 +14,23 @@ from = params.from
 to = params.to
 mode = params.mode
 owner = params.owner
-sudo = params.sudo.boolean!(default: true)
+group = params.group
+sudo = params.sudo.boolean!(default: true) || !!owner
 
 success = sh? '{{ "sudo " if sudo }}cp {{ from }} {{ to }}'
 
+chmod_success = true
+if mode
+  retval = core.chmod path: to, mode: mode, sudo: !!owner
+  retval => {success: chmod_success}
+end
+
+chown_success = true
+if owner
+  retval = core.chown path: to, owner: owner, group: group
+  retval => {success: chown_success}
+end
+
 {
-  success: success && chmod_success
+  success: success && chmod_success && chown_success
 }
