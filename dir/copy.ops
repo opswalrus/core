@@ -1,0 +1,39 @@
+params:
+  from: string
+  to: string
+  mode: string?
+  owner: string?
+  group: string?
+  sudo: boolean?        # default: false
+
+imports:
+  core: ..
+...
+
+from = params.from
+to = params.to
+mode = params.mode
+owner = params.owner
+group = params.group
+sudo = params.sudo.boolean!(default: false)
+
+success = core.dir.exists(path: from).exists &&
+          core.file.copy(from: from, to: to, mode: mode, owner: owner, group: group, recursive: true, sudo: sudo).success
+          # sh? '{{ "sudo " if sudo }}cp -r {{ from }} {{ to }}'
+
+# chmod_success = true
+# if mode && success
+#   retval = core.chmod path: to, mode: mode, sudo: !!owner
+#   retval => {success: chmod_success}
+# end
+
+# chown_success = true
+# if owner && success
+#   retval = core.chown path: to, owner: owner, group: group
+#   retval => {success: chown_success}
+# end
+
+{
+  success: !!success
+  # success: !!(success && chmod_success && chown_success)
+}
