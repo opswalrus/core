@@ -1,0 +1,15 @@
+params:
+  repo: string
+  dir: string
+output:
+  success: boolean
+...
+
+repo = params.repo
+dir = params.dir
+
+success = sh 'git clone {{ repo }} {{ dir }}'
+
+{
+  success: success
+}

@@ -1,0 +1,18 @@
+params:
+  delay: integer?     # default: 1 - 1 second delay before reboot
+output:
+  success: boolean
+...
+
+delay = params.delay.integer!(default: 1)
+delay = 1 if delay < 1
+
+rebooting = if reboot_needed().reboot_needed
+  desc "Rebooting"
+  sh? 'sudo /bin/sh -c "(sleep {{ delay }} && reboot) &"'.mustache
+end || false
+
+
+{
+  rebooting: rebooting
+}
