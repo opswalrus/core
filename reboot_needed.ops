@@ -4,7 +4,7 @@ output:
 
 reboot_needed = case os()
 in {base_os: /debian|ubuntu/}
-  file.exists(file: '/var/run/reboot-required')[:exists]
+  file.exists(path: '/var/run/reboot-required')[:exists]
 in {base_os: /fedora/}
   pkg.install!(package: 'dnf-utils')
   sh? 'needs-restarting'
