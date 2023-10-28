@@ -4,7 +4,40 @@ output:
 
 reboot_needed = case os()
 in {base_os: /debian|ubuntu/}
-  file.exists(path: '/var/run/reboot-required')[:exists]
+  pkg.install!(package: 'needrestart')
+  # file.exists(path: '/var/run/reboot-required')[:exists]
+
+  # per https://github.com/liske/needrestart/blob/master/README.batch.md
+  # The kernel status (NEEDRESTART-KSTA) value has the following meaning:
+  # 0: unknown or failed to detect
+  # 1: no pending upgrade
+  # 2: ABI compatible upgrade pending
+  # 3: version upgrade pending
+
+  # when reboot is needed:
+  # vagrant@vagrant:~$ sudo needrestart -b
+  # NEEDRESTART-VER: 3.5
+  # NEEDRESTART-KCUR: 5.15.0-83-generic
+  # NEEDRESTART-KEXP: 5.15.0-87-generic
+  # NEEDRESTART-KSTA: 3
+  # NEEDRESTART-SVC: dbus.service
+  # NEEDRESTART-SVC: getty@tty1.service
+  # NEEDRESTART-SVC: networkd-dispatcher.service
+  # NEEDRESTART-SVC: systemd-logind.service
+  # NEEDRESTART-SVC: user@1000.service
+  # NEEDRESTART-SVC: vboxadd-service.service
+
+  # when reboot isn't needed:
+  # vagrant@vagrant:~$ sudo needrestart -b
+  # NEEDRESTART-VER: 3.5
+  # NEEDRESTART-KCUR: 5.15.0-87-generic
+  # NEEDRESTART-KEXP: 5.15.0-87-generic
+  # NEEDRESTART-KSTA: 1
+
+  out = sh 'sudo needrestart -b'
+  reboot_is_not_needed = out =~ /NEEDRESTART-KSTA: 1/
+  !reboot_is_not_needed
+
 in {base_os: /fedora/}
   pkg.install!(package: 'dnf-utils')
   sh? 'needs-restarting'
@@ -13,5 +46,5 @@ else
 end
 
 {
-  reboot_needed: reboot_needed
+  reboot_needed: !!reboot_needed
 }
