@@ -12,4 +12,4 @@ end
 
 shell("Restart services that need to be restarted", input: {/Restarting the system to load the new kernel will not be handled automatically, so you should consider rebooting./ => "\n"}) { 'sudo needrestart -q -r a' }
 
-puts "The system needs to be rebooted." if reboot_needed().reboot_needed
+puts "The system needs to be rebooted." if core.reboot_needed().reboot_needed
