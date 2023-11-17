@@ -5,12 +5,60 @@ imports:
   core: ../..
 ...
 
+debian_post_install_prompt_responses = {
+  /Restarting the system to load the new kernel will not be handled automatically, so you should consider rebooting.*/ => "\e",
+  /Which services should be restarted?.*<Cancel>/ => "\e" # \e is 0x1b - escape key
+}
+
+# two interactive prompts we're coping with:
+
+# 1. Pending kernel upgrade
+
+# ┌───────────────────────────────────────────────┤ Pending kernel upgrade ├───────────────────────────────────────────────┐
+# │                                                                                                                        │
+# │ Newer kernel available                                                                                                 │
+# │                                                                                                                        │
+# │ The currently running kernel version is 5.15.0-83-generic which is not the expected kernel version 5.15.0-88-generic.  │
+# │                                                                                                                        │
+# │ Restarting the system to load the new kernel will not be handled automatically, so you should consider rebooting.      │
+# │                                                                                                                        │
+# │                                                         <Ok>                                                           │
+# │                                                                                                                        │
+# └────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+# 2. Daemons using outdated libraries
+
+# ┌────┤ Daemons using outdated libraries ├─────┐
+# │                                             │
+# │                                             │
+# │ Which services should be restarted?         │
+# │                                             │
+# │    [ ] dbus.service                         │
+# │    [ ] docker.service                       │
+# │    [ ] getty@tty1.service                   │
+# │    [ ] ModemManager.service                 │
+# │    [ ] networkd-dispatcher.service          │
+# │    [*] packagekit.service                   │
+# │    [*] polkit.service                       │
+# │    [ ] systemd-logind.service               │
+# │    [*] systemd-manager                      │
+# │    [*] udisks2.service                      │
+# │    [*] upower.service                       │
+# │    [ ] user@1000.service                    │
+# │    [*] vboxadd-service.service              │
+# │                                             │
+# │                                             │
+# │          <Ok>              <Cancel>         │
+# │                                             │
+# └─────────────────────────────────────────────┘
+
+
 if params.package.is_a? Array
-  shell("install {{ params.package.join(', ') }}") { 'sudo DEBIAN_FRONTEND=noninteractive apt install -yq {{ params.package.join(" ") }}' }
+  shell("install {{ params.package.join(', ') }}", input: debian_post_install_prompt_responses) { 'sudo DEBIAN_FRONTEND=noninteractive apt install -yq {{ params.package.join(" ") }}' }
 else
-  shell("install {{ params.package }}") { 'sudo DEBIAN_FRONTEND=noninteractive apt install -yq {{ params.package }}' }
+  shell("install {{ params.package }}", input: debian_post_install_prompt_responses) { 'sudo DEBIAN_FRONTEND=noninteractive apt install -yq {{ params.package }}' }
 end
 
-shell("Restart services that need to be restarted", input: {/Restarting the system to load the new kernel will not be handled automatically, so you should consider rebooting./ => "\n"}) { 'sudo needrestart -q -r a' }
+shell("Restart services that need to be restarted", input: debian_post_install_prompt_responses) { 'sudo needrestart -q -r a' }
 
 puts "The system needs to be rebooted." if core.reboot_needed().reboot_needed
