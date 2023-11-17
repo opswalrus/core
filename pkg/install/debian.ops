@@ -7,7 +7,7 @@ imports:
 
 debian_post_install_prompt_responses = {
   /Restarting the system to load the new kernel will not be handled automatically, so you should consider rebooting.*/ => "\e",
-  /Which services should be restarted?.*<Cancel>/ => "\e" # \e is 0x1b - escape key
+  /Which services should be restarted?.*<Cancel>/ => "\e" # \e is 0x1b - escape key ("\x1b", "\e", "\u001b")
 }
 
 # two interactive prompts we're coping with:
