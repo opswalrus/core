@@ -4,7 +4,7 @@ output:
 
 reboot_needed = case os()
 in {base_os: /debian|ubuntu/}
-  pkg.install!(package: 'needrestart')
+  pkg.install!(package: 'needrestart') unless pkg.info!(package: 'needrestart').installed
   # file.exists(path: '/var/run/reboot-required')[:exists]
 
   # per https://github.com/liske/needrestart/blob/master/README.batch.md

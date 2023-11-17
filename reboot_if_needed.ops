@@ -12,7 +12,6 @@ rebooting = if reboot_needed().reboot_needed
   sh? 'sudo /bin/sh -c "(sleep {{ delay }} && reboot) &"'.mustache
 end || false
 
-
 {
   rebooting: rebooting
 }

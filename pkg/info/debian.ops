@@ -1,0 +1,39 @@
+params:
+  package: string
+
+imports:
+  core: ../..
+
+output:
+  found: boolean
+  installed: boolean
+...
+
+package_name = params.package || raise("core.pkg.info.debian: No package name supplied")
+
+output, _, status = shell 'dpkg-query -f=\'{ "package": "${Package}", "package_binary": "${binary:Package}", "version": "${Version}", "status": "${Status}", "status_abbrev": "${db:Status-Abbrev}", "status_desired": "${db:Status-Want}", "status_actual": "${db:Status-Status}", "status_error": "${db:Status-Eflag}" }\' --show {{ package_name }}'
+# {
+#   "package": "needrestart",
+#   "package_binary": "needrestart",
+#   "version": "3.5-5ubuntu2.1",
+#   "status": "install ok installed",
+#   "status_abbrev": "ii ",
+#   "status_desired": "install",    # or "unknown", "deinstall"
+#   "status_actual": "installed",   # or "not-installed", "config-files"
+#   "status_error": "ok"
+# }
+
+is_found = false
+is_installed = false
+
+if status == 0
+  package_status_json = JSON.parse(output)
+
+  is_found = true
+  is_installed = package_status_json["status_actual"] == 'installed'
+end
+
+{
+  found: is_found,
+  installed: is_installed,
+}

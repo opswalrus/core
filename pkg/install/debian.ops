@@ -1,5 +1,6 @@
 params:
   package: string | array string
+
 imports:
   core: ../..
 ...
