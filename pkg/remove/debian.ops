@@ -1,5 +1,8 @@
 params:
   package: string | array string
+
+imports:
+  core: ../..
 ...
 
 debian_post_install_prompt_responses = {
