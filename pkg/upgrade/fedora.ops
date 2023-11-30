@@ -3,7 +3,7 @@ params:
 ...
 
 case params.package
-when Nil
+when nil
   shell("upgrade all packages") { 'sudo dnf -yq upgrade' }
 when Array
   shell("upgrade {{ params.package.join(', ') }}") { 'sudo dnf -yq upgrade {{ params.package.join(" ") }}' }

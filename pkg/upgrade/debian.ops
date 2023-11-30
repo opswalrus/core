@@ -54,7 +54,7 @@ debian_post_install_prompt_responses = {
 # └─────────────────────────────────────────────┘
 
 case params.package
-when Nil
+when nil
   shell("upgrade all packages", input: debian_post_install_prompt_responses) { 'sudo DEBIAN_FRONTEND=noninteractive apt upgrade -yq' }
 when Array
   shell("upgrade {{ params.package.join(', ') }}", input: debian_post_install_prompt_responses) { 'sudo DEBIAN_FRONTEND=noninteractive apt install -yq {{ params.package.join(" ") }} --only-upgrade' }
