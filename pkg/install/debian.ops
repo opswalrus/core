@@ -6,7 +6,8 @@ imports:
 ...
 
 debian_post_install_prompt_responses = {
-  /Restarting the system to load the new kernel will not be handled automatically, so you should consider rebooting\..*<Ok>/ => "\e",
+  # /Restarting the system to load the new kernel will not be handled automatically, so you should consider rebooting\..*<Ok>/ => "\e",
+  /Restarting the system to load the new kernel will not be handled .* automatically, so you should consider rebooting\..*<Ok>/ => "\e",
   /Which services should be restarted?.*<Cancel>/ => "\e" # \e is 0x1b - escape key ("\x1b", "\e", "\u001b")
 }
 
@@ -51,7 +52,6 @@ debian_post_install_prompt_responses = {
 # │          <Ok>              <Cancel>         │
 # │                                             │
 # └─────────────────────────────────────────────┘
-
 
 if params.package.is_a? Array
   shell("install {{ params.package.join(', ') }}", input: debian_post_install_prompt_responses) { 'sudo DEBIAN_FRONTEND=noninteractive apt install -yq {{ params.package.join(" ") }}' }

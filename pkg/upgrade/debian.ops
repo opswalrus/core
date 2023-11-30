@@ -1,5 +1,8 @@
 params:
-  package: string | array string
+  package: nil | string | array string
+
+imports:
+  core: ../..
 ...
 
 debian_post_install_prompt_responses = {
@@ -50,10 +53,13 @@ debian_post_install_prompt_responses = {
 # │                                             │
 # └─────────────────────────────────────────────┘
 
-if params.package.is_a? Array
-  shell("remove {{ params.package.join(', ') }}", input: debian_post_install_prompt_responses) { 'sudo DEBIAN_FRONTEND=noninteractive apt remove -yq {{ params.package.join(" ") }}' }
+case params.package
+when Nil
+  shell("upgrade all packages", input: debian_post_install_prompt_responses) { 'sudo DEBIAN_FRONTEND=noninteractive apt upgrade -yq' }
+when Array
+  shell("upgrade {{ params.package.join(', ') }}", input: debian_post_install_prompt_responses) { 'sudo DEBIAN_FRONTEND=noninteractive apt install -yq {{ params.package.join(" ") }} --only-upgrade' }
 else
-  shell("remove {{ params.package }}", input: debian_post_install_prompt_responses) { 'sudo DEBIAN_FRONTEND=noninteractive apt remove -yq {{ params.package }}' }
+  shell("upgrade {{ params.package }}", input: debian_post_install_prompt_responses) { 'sudo DEBIAN_FRONTEND=noninteractive apt install -yq {{ params.package }} --only-upgrade' }
 end
 
 shell("Restart services that need to be restarted", input: debian_post_install_prompt_responses) { 'sudo needrestart -q -r a' }

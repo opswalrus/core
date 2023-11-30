@@ -1,0 +1,12 @@
+params:
+  package: nil | string | array string
+...
+
+case params.package
+when Nil
+  shell("upgrade all packages") { 'sudo dnf -yq upgrade' }
+when Array
+  shell("upgrade {{ params.package.join(', ') }}") { 'sudo dnf -yq upgrade {{ params.package.join(" ") }}' }
+else
+  shell("upgrade {{ params.package }}") { 'sudo dnf -yq upgrade {{ params.package }}' }
+end

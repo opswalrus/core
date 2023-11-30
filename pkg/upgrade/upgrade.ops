@@ -1,0 +1,17 @@
+params:
+  package: string | array string | nil    # optional package parameter may either be a String or an Array(String)
+
+imports:
+  os: ../../os
+...
+
+case os()
+# in {base_os: /arch/}
+#   arch(package: params.package)
+in {base_os: /debian|ubuntu/}
+  debian(package: params.package)
+in {base_os: /fedora/}
+  fedora(package: params.package)
+else
+  exit 1, "unknown os; unable to upgrade #{params.package}"
+end
