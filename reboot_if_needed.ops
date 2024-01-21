@@ -1,15 +1,23 @@
 params:
   delay: integer?     # default: 1 - 1 second delay before reboot
+  exit: boolean?      # default: true
+  message: string?    # default: "Reboot needed. Rebooting."
 output:
   success: boolean
 ...
 
 delay = params.delay.integer!(default: 1)
 delay = 1 if delay < 1
+exit_early = params.exit.boolean!(default: true)
+message = params.message.string!(default: "Reboot needed. Rebooting.")
 
 rebooting = if reboot_needed().reboot_needed
-  desc "Rebooting"
-  sh? 'sudo /bin/sh -c "(sleep {{ delay }} && reboot) &"'.mustache
+  desc message
+  if exit_early
+    reboot_and_exit(delay: delay)
+  else
+    reboot(delay: delay)
+  end
 end || false
 
 {
