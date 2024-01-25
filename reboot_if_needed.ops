@@ -1,6 +1,5 @@
 params:
   delay: integer?     # default: 1 - 1 second delay before reboot
-  exit: boolean?      # default: true
   message: string?    # default: "Reboot needed. Rebooting."
 output:
   success: boolean
@@ -8,16 +7,11 @@ output:
 
 delay = params.delay.integer!(default: 1)
 delay = 1 if delay < 1
-exit_early = params.exit.boolean!(default: true)
 message = params.message.string!(default: "Reboot needed. Rebooting.")
 
 rebooting = if reboot_needed().reboot_needed
   desc message
-  if exit_early
-    reboot_and_exit(delay: delay)
-  else
-    reboot(delay: delay)
-  end
+  reboot(delay: delay)
 end || false
 
 {
