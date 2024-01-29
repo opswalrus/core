@@ -31,19 +31,12 @@ output:
       #...
 ...
 
-name = hostname.get()[:hostname]
-
-require_relative "info"
-lsb_release = lsb_release()
-
-lscpu = sh { "lscpu -J" }
-lscpu_json = JSON.parse(lscpu)['lscpu'] rescue nil
+host = info.host
 
 {
   host: {
-    name: name,
-    os: os(),
-    lsb_release: lsb_release,
-    lscpu: lscpu_json,
+    name: host.name,
+    os: host.os,
+    cpu: host.lscpu[2][:children][0][:data],
   }
 }
